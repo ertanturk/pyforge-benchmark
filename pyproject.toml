@@ -1,0 +1,103 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pyforge-benchmark"
+version = "0.0.1"
+description = "A lightweight Python benchmarking framework for personal projects and learning. Zero configuration, decorator-based benchmarks, automatic performance comparison, and built-in complexity analysis."
+readme = "README.md"
+requires-python = ">=3.12"
+license = "MIT"
+license-files = ["LICENSE"]
+keywords = ["benchmark", "complexity", "comparison", "analysis"]
+
+authors = [
+    { name = "Ertan Tunç Türk", email = "ertantuncturk61@gmail.com" }
+]
+
+maintainers = [
+    { name = "Ertan Tunç Türk", email = "ertantuncturk61@gmail.com" }
+]
+
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Software Development :: Testing",
+    "Topic :: System :: Benchmark",
+    "Typing :: Typed",
+]
+
+[project.urls]
+Repository = "https://github.com/ertanturk/pyforge-benchmark"
+
+# ----------------------
+# Ruff Configuration
+# ----------------------
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+fix = true
+
+[tool.ruff.lint]
+select = [
+    "E",    # pycodestyle errors
+    "W",    # pycodestyle warnings
+    "F",    # pyflakes
+    "I",    # import sorting
+    "UP",   # pyupgrade
+    "B",    # bugbear
+    "C4",   # comprehensions
+    "SIM",  # simplifications
+    "RUF",  # Ruff-specific rules
+    "PL",   # pylint subset
+    "ARG"   # unused arguments
+]
+
+ignore = []
+fixable = ["ALL"]
+unfixable = []
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+
+# ----------------------
+# Pylint Configuration
+# ----------------------
+
+[tool.pylint.main]
+py-version = "3.12"
+jobs = 0
+load-plugins = []
+
+[tool.pylint."messages control"]
+disable = [
+    "C0114",  # missing-module-docstring
+    "C0115",  # missing-class-docstring
+    "C0116",  # missing-function-docstring
+    "R0903",  # too-few-public-methods
+    "R0801",  # duplicate-code
+]
+
+[tool.pylint.format]
+max-line-length = 100
+
+[tool.pylint.design]
+max-args = 7
+max-locals = 15
+max-returns = 6
+max-branches = 12
+max-statements = 50
+
+[tool.pylint.similarities]
+min-similarity-lines = 6
+
+[tool.pylint.imports]
+known-third-party = []
