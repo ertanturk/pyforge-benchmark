@@ -1,0 +1,18 @@
+# Include documentation files in source distribution
+include LICENSE
+include README.md
+include pyproject.toml
+
+# Include type stubs marker
+include src/pyforge_benchmark/py.typed
+
+# Include docs
+recursive-include docs *.md
+
+# Exclude development/test artifacts
+prune benchmarks
+prune .github
+prune .vscode
+global-exclude __pycache__
+global-exclude *.py[cod]
+global-exclude *.egg-info

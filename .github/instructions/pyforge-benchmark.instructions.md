@@ -117,13 +117,13 @@ The core loop that manages the queue and the worker processes.
 
 ## CLI Commands
 
-| Command                                | Purpose                                          |
-| -------------------------------------- | ------------------------------------------------ |
-| `pyforge-benchmark run`                | Run all registered benchmarks                    |
-| `pyforge-benchmark run --type <type>`  | Run benchmarks filtered by type                  |
-| `pyforge-benchmark run <path>`         | Run benchmarks from a specific file or directory |
-| `pyforge-benchmark -c <func1> <func2>` | Compare two functions head-to-head               |
-| `pyforge-benchmark list`               | List all registered benchmark functions          |
+| Command                                | Purpose                                                 |
+| -------------------------------------- | ------------------------------------------------------- |
+| `pyforge-benchmark run`                | Run all registered benchmarks                           |
+| `pyforge-benchmark run --type <type>`  | Run benchmarks filtered by type (complexity, benchmark) |
+| `pyforge-benchmark run <path>`         | Run benchmarks from a specific file or directory        |
+| `pyforge-benchmark -c <func1> <func2>` | Compare two functions head-to-head                      |
+| `pyforge-benchmark list`               | List all registered benchmark functions                 |
 
 ## Edge Cases & Considerations
 

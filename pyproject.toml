@@ -10,31 +10,56 @@ readme = "README.md"
 requires-python = ">=3.12"
 license = "MIT"
 license-files = ["LICENSE"]
-keywords = ["benchmark", "complexity", "comparison", "analysis"]
+keywords = [
+    "benchmark",
+    "performance",
+    "complexity",
+    "big-o",
+    "profiling",
+    "testing",
+    "analysis",
+]
 
 authors = [
-    { name = "Ertan Tunç Türk", email = "ertantuncturk61@gmail.com" }
+    { name = "Ertan Tunç Türk", email = "ertantuncturk61@gmail.com" },
 ]
 
 maintainers = [
-    { name = "Ertan Tunç Türk", email = "ertantuncturk61@gmail.com" }
+    { name = "Ertan Tunç Türk", email = "ertantuncturk61@gmail.com" },
 ]
 
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Intended Audience :: Developers",
-    "License :: OSI Approved :: MIT License",
+    "Intended Audience :: Education",
     "Operating System :: OS Independent",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
+    "Topic :: Software Development :: Libraries :: Python Modules",
     "Topic :: Software Development :: Testing",
     "Topic :: System :: Benchmark",
     "Typing :: Typed",
 ]
 
 [project.urls]
+Homepage = "https://github.com/ertanturk/pyforge-benchmark"
 Repository = "https://github.com/ertanturk/pyforge-benchmark"
+Documentation = "https://github.com/ertanturk/pyforge-benchmark#readme"
+Issues = "https://github.com/ertanturk/pyforge-benchmark/issues"
+
+[project.scripts]
+pyforge-benchmark = "pyforge_benchmark.cli:main_cli"
+
+# ----------------------
+# Setuptools Configuration
+# ----------------------
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+pyforge_benchmark = ["py.typed"]
 
 # ----------------------
 # Ruff Configuration
@@ -44,6 +69,7 @@ Repository = "https://github.com/ertanturk/pyforge-benchmark"
 line-length = 100
 target-version = "py312"
 fix = true
+src = ["src"]
 
 [tool.ruff.lint]
 select = [
@@ -57,12 +83,29 @@ select = [
     "SIM",  # simplifications
     "RUF",  # Ruff-specific rules
     "PL",   # pylint subset
-    "ARG"   # unused arguments
+    "ARG",  # unused arguments
+    "D",    # pydocstyle
+    "PT",   # pytest style
+    "TCH",  # type-checking imports
+    "PERF", # performance anti-patterns
 ]
 
-ignore = []
+ignore = [
+    "D100",   # missing docstring in public module (we add them ourselves)
+    "D104",   # missing docstring in public package
+    "D203",   # no-blank-line-before-class (conflicts with D211)
+    "D213",   # multi-line-summary-second-line (conflicts with D212)
+    "PLR0913", # too many arguments
+]
+
 fixable = ["ALL"]
 unfixable = []
+
+[tool.ruff.lint.isort]
+known-first-party = ["pyforge_benchmark"]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
 
 [tool.ruff.format]
 quote-style = "double"
@@ -76,6 +119,7 @@ indent-style = "space"
 py-version = "3.12"
 jobs = 0
 load-plugins = []
+source-roots = ["src"]
 
 [tool.pylint."messages control"]
 disable = [
@@ -84,6 +128,13 @@ disable = [
     "C0116",  # missing-function-docstring
     "R0903",  # too-few-public-methods
     "R0801",  # duplicate-code
+    "R0913",  # too-many-arguments
+    "R0914",  # too-many-locals (reporter formatting functions)
+    "R1705",  # no-else-return (style preference)
+    "W0212",  # access to protected member (needed for testing)
+    "W0718",  # broad-exception-caught (intentional for framework error handling)
+    "E1136",  # unsubscriptable-object (false positive for Queue[T] on 3.12+)
+    "C0301",  # line-too-long (handled by ruff)
 ]
 
 [tool.pylint.format]
@@ -101,3 +152,22 @@ min-similarity-lines = 6
 
 [tool.pylint.imports]
 known-third-party = []
+
+# ----------------------
+# Pytest Configuration
+# ----------------------
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+
+# ----------------------
+# Mypy Configuration
+# ----------------------
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true

@@ -1,12 +1,32 @@
-from collections.abc import Callable
-from typing import Any, ClassVar
+"""Singleton registry for storing benchmark and complexity analysis metadata."""
+
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, Any, ClassVar
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
 
 
 class Registry:
-    instance = None
+    """Singleton registry for benchmark and complexity function metadata.
+
+    Uses a class-level store so all instances share the same registered
+    functions. Access via ``Registry()`` from anywhere in the codebase.
+    """
+
+    instance: ClassVar[Registry | None] = None
     __store: ClassVar[dict[str, Any]] = {}
 
-    def __new__(cls) -> "Registry":
+    def __new__(cls) -> Registry:
+        """Create or return the singleton Registry instance.
+
+        Returns:
+            The single Registry instance.
+
+        Raises:
+            RuntimeError: If instance creation fails.
+        """
         try:
             if cls.instance is None:
                 cls.instance = super().__new__(cls)
@@ -34,6 +54,7 @@ class Registry:
         test_type: str,
         args: tuple[Any, ...] = (),
         kwargs: dict[str, Any] | None = None,
+        **metadata_kwargs: Any,
     ) -> None:
         """Register a function with a unique key.
 
@@ -42,6 +63,7 @@ class Registry:
             test_type: The type of the test.
             args: Positional arguments to pass when benchmarking.
             kwargs: Keyword arguments to pass when benchmarking.
+            **metadata_kwargs: Additional metadata to store (e.g., generator).
         """
         try:
             unique_key = self.__generate_key(func)
@@ -50,6 +72,7 @@ class Registry:
                 "type": test_type,
                 "args": args,
                 "kwargs": kwargs or {},
+                **metadata_kwargs,
             }
             self.__store[unique_key] = metadata
         except Exception as e:
@@ -74,6 +97,7 @@ class Registry:
 
         Args:
             key (str): The unique key of the function to retrieve.
+
         Returns:
             dict[str, Any] | None: The metadata for the function, or None if not found.
         """
@@ -114,3 +138,21 @@ class Registry:
             return [metadata for metadata in self.__store.values() if metadata["type"] == test_type]
         except Exception as e:
             raise RuntimeError(f"Error filtering registry by type '{test_type}': {e}") from e
+
+    def list_by_type(self, test_type: str) -> list[tuple[str, dict[str, Any]]]:
+        """List all registered functions of a given type as (key, metadata) pairs.
+
+        Args:
+            test_type (str): The type of the test to filter by.
+
+        Returns:
+            list[tuple[str, dict[str, Any]]]: A list of (key, metadata) tuples.
+        """
+        try:
+            return [
+                (key, metadata)
+                for key, metadata in self.__store.items()
+                if metadata["type"] == test_type
+            ]
+        except Exception as e:
+            raise RuntimeError(f"Error listing registry by type '{test_type}': {e}") from e
