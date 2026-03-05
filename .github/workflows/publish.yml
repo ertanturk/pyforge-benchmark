@@ -1,15 +1,40 @@
 name: Publish to PyPI
 
 on:
-  release:
-    types: [published]
+  push:
+    branches: [main]
+    paths:
+      - "src/pyforge_benchmark/_version.py"
+  workflow_dispatch:
+    inputs:
+      confirm:
+        description: "Type 'publish' to confirm PyPI release"
+        required: true
 
 permissions:
   contents: read
 
 jobs:
+  # ── Guard: abort manual dispatch without confirmation ──
+  preflight:
+    name: Preflight check
+    runs-on: ubuntu-latest
+    if: >-
+      github.event_name != 'workflow_dispatch'
+      || github.event.inputs.confirm == 'publish'
+    steps:
+      - run: echo "Preflight passed"
+
+  # ── Quality gate: run the full CI suite first ──
+  ci:
+    name: CI gate
+    needs: preflight
+    uses: ./.github/workflows/ci.yml
+
+  # ── Build sdist + wheel ──
   build:
     name: Build distribution
+    needs: ci
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -27,12 +52,22 @@ jobs:
       - name: Build package
         run: python -m build
 
+      - name: Store version string
+        id: ver
+        run: |
+          VERSION=$(python -c "from src.pyforge_benchmark._version import __version__; print(__version__)")
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+
       - name: Upload dist artifacts
         uses: actions/upload-artifact@v4
         with:
           name: dist
           path: dist/
 
+    outputs:
+      version: ${{ steps.ver.outputs.version }}
+
+  # ── Publish to PyPI using trusted publishing ──
   publish:
     name: Publish to PyPI
     needs: build
@@ -49,3 +84,57 @@ jobs:
 
       - name: Publish to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
+
+  # ── Auto-create a git tag and GitHub Release ──
+  github-release:
+    name: Create GitHub Release
+    needs: [build, publish]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Configure git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Create and push tag
+        run: |
+          TAG="v${{ needs.build.outputs.version }}"
+          git tag -a "$TAG" -m "Release $TAG"
+          git push origin "$TAG"
+
+      - name: Generate release notes
+        id: notes
+        run: |
+          TAG="v${{ needs.build.outputs.version }}"
+          PREV_TAG=$(git describe --tags --abbrev=0 "${TAG}^" 2>/dev/null || echo "")
+          if [ -n "$PREV_TAG" ]; then
+            BODY=$(git log --pretty=format:"- %s" "${PREV_TAG}..${TAG}")
+          else
+            BODY=$(git log --pretty=format:"- %s" "${TAG}")
+          fi
+          {
+            echo "body<<EOF"
+            echo "$BODY"
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Download dist artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist/
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ needs.build.outputs.version }}
+          name: v${{ needs.build.outputs.version }}
+          body: ${{ steps.notes.outputs.body }}
+          files: dist/*
+          generate_release_notes: true

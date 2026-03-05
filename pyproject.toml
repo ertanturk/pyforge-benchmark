@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools>=68", "wheel", "setuptools-scm>=8"]
+requires = ["setuptools>=68", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -61,10 +61,8 @@ where = ["src"]
 [tool.setuptools.package-data]
 pyforge_benchmark = ["py.typed"]
 
-[tool.setuptools_scm]
-write_to = "src/pyforge_benchmark/_version.py"
-version_scheme = "guess-next-dev"
-local_scheme = "no-local-version"
+[tool.setuptools.dynamic]
+version = {attr = "pyforge_benchmark._version.__version__"}
 
 # ----------------------
 # Ruff Configuration
