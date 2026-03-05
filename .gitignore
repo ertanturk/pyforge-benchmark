@@ -38,6 +38,7 @@ env/
 # Build & Packaging
 # ==================================================
 
+src/pyforge_benchmark/_version.py
 build/
 dist/
 *.egg-info/

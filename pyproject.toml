@@ -1,10 +1,10 @@
 [build-system]
-requires = ["setuptools>=68", "wheel"]
+requires = ["setuptools>=68", "wheel", "setuptools-scm>=8"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "pyforge-benchmark"
-version = "0.0.1"
+dynamic = ["version"]
 description = "A lightweight Python benchmarking framework for personal projects and learning. Zero configuration, decorator-based benchmarks, automatic performance comparison, and built-in complexity analysis."
 readme = "README.md"
 requires-python = ">=3.12"
@@ -60,6 +60,11 @@ where = ["src"]
 
 [tool.setuptools.package-data]
 pyforge_benchmark = ["py.typed"]
+
+[tool.setuptools_scm]
+write_to = "src/pyforge_benchmark/_version.py"
+version_scheme = "guess-next-dev"
+local_scheme = "no-local-version"
 
 # ----------------------
 # Ruff Configuration

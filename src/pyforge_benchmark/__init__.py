@@ -12,7 +12,10 @@ from .complexity import complexity_analysis
 from .main import main, run_cycle
 from .reporter import print_report
 
-__version__ = "0.0.1"
+try:
+    from ._version import version as __version__
+except ImportError:  # pragma: no cover
+    __version__ = "0.0.0dev"
 __author__ = "Ertan Tunç Türk"
 __email__ = "ertantuncturk61@gmail.com"
 
