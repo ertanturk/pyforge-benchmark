@@ -224,17 +224,15 @@ def _validate_multi_param(test_data: Any, func_params: list[Any]) -> None:
         ValueError: If validation fails.
     """
     if isinstance(test_data, tuple):
-        data = cast("tuple[Any, ...]", test_data)
         param_count = len(func_params)
-        if len(data) != param_count:
+        if len(test_data) != param_count:
             raise ValueError(
-                f"Generator returned tuple with {len(data)} items "
+                f"Generator returned tuple with {len(test_data)} items "
                 f"but function expects {param_count} parameters"
             )
     elif isinstance(test_data, dict):
-        data = cast("dict[str, Any]", test_data)
         param_names = {p.name for p in func_params}
-        missing_keys = param_names - data.keys()
+        missing_keys = param_names - test_data.keys()
         if missing_keys:
             raise ValueError(f"Generator returned dict missing keys: {missing_keys}")
     else:
