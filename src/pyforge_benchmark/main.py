@@ -24,23 +24,24 @@ def inject_sys_path(benchmarks_dir: str | Path | None = None) -> Path:
         ValueError: If benchmarks directory does not exist.
     """
     if benchmarks_dir is None:
-        benchmarks_dir = Path.cwd() / "benchmarks"
+        resolved = Path.cwd() / "benchmarks"
+    elif isinstance(benchmarks_dir, Path):
+        resolved = benchmarks_dir
     else:
-        is_path = isinstance(benchmarks_dir, Path)
-        benchmarks_dir = benchmarks_dir if is_path else Path(benchmarks_dir)
+        resolved = Path(benchmarks_dir)
 
-    if not benchmarks_dir.exists():
-        raise ValueError(f"Benchmarks directory not found: {benchmarks_dir}")
+    if not resolved.exists():
+        raise ValueError(f"Benchmarks directory not found: {resolved}")
 
-    if not benchmarks_dir.is_dir():
-        raise ValueError(f"Path is not a directory: {benchmarks_dir}")
+    if not resolved.is_dir():
+        raise ValueError(f"Path is not a directory: {resolved}")
 
     # Add to sys.path if not already there
-    benchmarks_str = str(benchmarks_dir.resolve())
+    benchmarks_str = str(resolved.resolve())
     if benchmarks_str not in sys.path:
         sys.path.insert(0, benchmarks_str)
 
-    return benchmarks_dir
+    return resolved
 
 
 def discover_benchmark_modules(benchmarks_dir: Path) -> list[Path]:
