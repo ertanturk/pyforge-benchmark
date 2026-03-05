@@ -6,6 +6,7 @@ A lightweight, zero-dependency Python benchmarking framework for personal projec
 > benchmarking tools like `pytest-benchmark`, `asv`, or `pyperf`.
 
 [![Python 3.12+](https://img.shields.io/badge/python-3.12%2B-blue.svg)](https://www.python.org/downloads/)
+[![PyPI version](https://img.shields.io/pypi/v/pyforge-benchmark.svg)](https://pypi.org/project/pyforge-benchmark/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 [![Typing: Typed](https://img.shields.io/badge/typing-typed-blue.svg)](https://peps.python.org/pep-0561/)
 [![Code style: Ruff](https://img.shields.io/badge/code%20style-ruff-000000.svg)](https://docs.astral.sh/ruff/)
@@ -23,11 +24,13 @@ A lightweight, zero-dependency Python benchmarking framework for personal projec
 
 ## Installation
 
+Available on PyPI: https://pypi.org/project/pyforge-benchmark/
+
 ```bash
 pip install pyforge-benchmark
 ```
 
-Or from source:
+**Or** install from source:
 
 ```bash
 git clone https://github.com/ertanturk/pyforge-benchmark.git
@@ -204,7 +207,7 @@ for entry in results["complexity"]:
 
 1. Functions decorated with `@complexity_analysis` are tested at multiple input sizes
 2. The generator creates test data for each N value
-3. Execution time is measured at N = 500, 1000, 2500, 5000, 10000, 25000
+3. Execution time is measured at N = 1000, 2500, 5000, 10000, 25000, 50000
 4. Log-log regression (`log(t) = k × log(n) + c`) determines the growth exponent
 5. The exponent maps directly to a Big-O complexity class
 6. R² indicates model fit quality (1.0 = perfect)
@@ -239,6 +242,10 @@ pylint src/pyforge_benchmark/
 # Format
 ruff format src/
 ```
+
+## Documentation
+
+Full documentation available in [docs/Documentation.md](docs/Documentation.md)
 
 ## Limitations
 
